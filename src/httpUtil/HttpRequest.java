@@ -53,6 +53,23 @@ public class HttpRequest {
         return null;
     }
 
+    private String parseType(String fileName) {
+
+        switch(fileName.replaceAll("^[^.]*.", "").toLowerCase()){ // FIXME that actually catches only first dot
+            case "jpg":
+            case "jpeg":
+                return IMAGE_JPEG;
+            case "bmp":
+                return IMAGE_BMP;
+            case "gif":
+                return IMAGE_GIF;
+            case "png":
+                return IMAGE_PNG;
+            default:
+                return APPLICATION_OCTET_STREAM;
+        }
+    }
+
     public HttpMethod getMethod() { return method; }
     public String getFileName() { return fileName; }
     public long getContentLength() { return contentLength; }
