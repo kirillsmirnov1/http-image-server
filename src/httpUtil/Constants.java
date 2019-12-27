@@ -23,4 +23,9 @@ public interface Constants {
     String IMAGE_GIF = "image/gif";
     String IMAGE_PNG = "image/png";
     String APPLICATION_OCTET_STREAM = "application/octet-stream";
+
+    // Response codes
+    String OK_200 = "200 OK";
+    String NOT_FOUND_404 = "404 Not Found";
+    String NOT_ALLOWED_405 = "405 Method Not Allowed";
 }
