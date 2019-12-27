@@ -9,7 +9,6 @@ public class HttpRequestParser {
 
     public static HttpRequestHeader parseRequest(BufferedReader reader) {
         try {
-
             HttpRequestHeader header = new HttpRequestHeader();
 
             String line = reader.readLine();
@@ -22,7 +21,7 @@ public class HttpRequestParser {
                     case GET:
                     case HEAD: {
                         header.setMethod(HttpMethod.valueOf(tokens[0]));
-                        header.setFileName(tokens[1]);
+                        header.setFileName(tokens[1]); // TODO might need to check if there is actually something in there
                         break;
                     }
                     case CONTENT_LENGTH: {
@@ -35,6 +34,8 @@ public class HttpRequestParser {
             return header;
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            System.out.println("Connection seems to be broken");
         }
         return null;
     }
