@@ -3,6 +3,8 @@ package client;
 import java.io.File;
 import java.util.Scanner;
 
+import static httpUtil.Constants.*;
+
 public class ClientHandler {
     public static void main(String[] args) {
         HttpClient httpClient = new HttpClient(8080);
@@ -17,18 +19,18 @@ public class ClientHandler {
 
         while (true){
             String[] input = scanner.nextLine().split(" ");
-            switch (input[0].toUpperCase()){    // TODO enum with keys?
-                case "POST":
+            switch (input[0].toUpperCase()){
+                case POST:
                     if(filenameIsFine(input)){
                         httpClient.sendPostRequest(input[1]);
                     }
                     break;
-                case "GET":
+                case GET:
                     if(filenameIsFine(input)){
                         httpClient.sendGetRequest(input[1]);
                     }
                     break;
-                case "STOP":
+                case STOP:
                     httpClient.stop();
                     return;
                 default:
@@ -44,7 +46,7 @@ public class ClientHandler {
             return false;
         }
 
-        if(input[0].toUpperCase().equals("POST")){
+        if(input[0].toUpperCase().equals(POST)){
             File file = new File(input[1]);
             if(!file.exists()){
                 System.out.println("File doesn't exist");

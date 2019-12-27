@@ -2,6 +2,8 @@ package server;
 
 import java.util.Scanner;
 
+import static httpUtil.Constants.STOP;
+
 public class ServerHandler {
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8080);
@@ -18,7 +20,7 @@ public class ServerHandler {
         while (true){
             String input = scanner.nextLine();
 
-            if(input.toUpperCase().equals("STOP")){ // TODO enum with keys?
+            if(input.toUpperCase().equals(STOP)){
                 httpServer.stop(); // TODO wait for server to stop
                 break;
             } else {
