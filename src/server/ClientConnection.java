@@ -29,7 +29,7 @@ public class ClientConnection implements Runnable {
                 line = reader.readLine();
             }
 
-            String httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + new Date();
+            String httpResponse = "HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n" + new Date();
 
             System.out.println("\nWe are sending: \n" + httpResponse);
 
