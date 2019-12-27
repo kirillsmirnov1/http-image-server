@@ -21,7 +21,6 @@ public class HttpServer implements Runnable{
 
     @Override
     public void run(){
-        // TODO start a thread which checks input connections
 
         try{
             serverSocket = new ServerSocket(port);
@@ -30,23 +29,12 @@ public class HttpServer implements Runnable{
 
             while (acceptingConnections){
 
-                try(Socket clientSocket = serverSocket.accept();
-                    InputStreamReader isr = new InputStreamReader(clientSocket.getInputStream());
-                    BufferedReader reader = new BufferedReader(isr)){                               // TODO add output stream
+                try{
+                    Socket clientSocket = serverSocket.accept();
 
-                    System.out.println("\nClient sent: \n");
-
-                    String line = reader.readLine();
-                    while (!line.isEmpty()) {
-                        System.out.println(line);
-                        line = reader.readLine();
-                    }
-
-                    String httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + new Date();
-
-                    System.out.println("\nWe are sending: \n" + httpResponse);
-
-                    clientSocket.getOutputStream().write(httpResponse.getBytes());
+                    ClientConnection clientConnection = new ClientConnection(clientSocket);
+                    Thread clientThread = new Thread(clientConnection);
+                    clientThread.start();
 
                 } catch (SocketException e){
                     System.out.println("Closed server socket");
