@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 
 public class HttpServer implements Runnable{
@@ -12,6 +13,8 @@ public class HttpServer implements Runnable{
     private final String address;
     private final int port;
     private boolean acceptingConnections = true;
+
+    private ServerSocket serverSocket;
 
     HttpServer(String address, int port){
         this.address = address;
@@ -22,10 +25,12 @@ public class HttpServer implements Runnable{
     public void run(){
         // TODO start a thread which checks input connections
 
-        try(ServerSocket serverSocket = new ServerSocket(port)){
+        try{
+            serverSocket = new ServerSocket(port);
+
             System.out.println("Server started");
 
-            while (acceptingConnections){ // FIXME for some reason, it accepts one more connection
+            while (acceptingConnections){
 
                 try(Socket clientSocket = serverSocket.accept();
                     InputStreamReader isr = new InputStreamReader(clientSocket.getInputStream());
@@ -34,7 +39,7 @@ public class HttpServer implements Runnable{
                     System.out.println("\nClient sent: \n");
 
                     String line = reader.readLine();
-                    while (!line.isEmpty()){
+                    while (!line.isEmpty()) {
                         System.out.println(line);
                         line = reader.readLine();
                     }
@@ -44,6 +49,9 @@ public class HttpServer implements Runnable{
                     System.out.println("\nWe are sending: \n" + httpResponse);
 
                     clientSocket.getOutputStream().write(httpResponse.getBytes());
+
+                } catch (SocketException e){
+                    System.out.println("Closed server socket");
                 }
             }
 
@@ -54,7 +62,15 @@ public class HttpServer implements Runnable{
 
     public void stop(){
         acceptingConnections = false;
-        System.out.println("Server stopped, I guess");
-        // TODO
+
+        try {
+            serverSocket.close();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Server stopping");
+
+        // TODO handle waiting for end of client connections
     }
 }
