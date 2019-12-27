@@ -3,6 +3,7 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 
@@ -17,7 +18,8 @@ public class ClientConnection implements Runnable {
     @Override
     public void run() {
         try(InputStreamReader isr = new InputStreamReader(socket.getInputStream());
-            BufferedReader reader = new BufferedReader(isr)){                               // TODO add output stream
+            BufferedReader reader = new BufferedReader(isr);
+            OutputStream outputStream = socket.getOutputStream()){
 
             System.out.println("\nClient sent: \n");
 
@@ -31,7 +33,7 @@ public class ClientConnection implements Runnable {
 
             System.out.println("\nWe are sending: \n" + httpResponse);
 
-            socket.getOutputStream().write(httpResponse.getBytes());
+            outputStream.write(httpResponse.getBytes());
 
             socket.close();
         } catch (IOException e) {
