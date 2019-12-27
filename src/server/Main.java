@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        HttpServer httpServer = new HttpServer("127.0.0.1", 8080);
+        HttpServer httpServer = new HttpServer(8080);
         Thread serverThread = new Thread(httpServer);
 
         Scanner scanner = new Scanner(System.in);

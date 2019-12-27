@@ -10,14 +10,12 @@ import java.util.Date;
 
 public class HttpServer implements Runnable{
 
-    private final String address;
     private final int port;
     private boolean acceptingConnections = true;
 
     private ServerSocket serverSocket;
 
-    HttpServer(String address, int port){
-        this.address = address;
+    HttpServer(int port){
         this.port = port;
     }
 
