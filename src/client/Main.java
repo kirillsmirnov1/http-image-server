@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        HttpClient httpClient = new HttpClient("127.0.0.1", 80);
+        HttpClient httpClient = new HttpClient(8080);
         httpClient.connectToServer();
 
         Scanner scanner = new Scanner(System.in);

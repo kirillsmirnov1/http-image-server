@@ -1,17 +1,15 @@
 package client;
 
 public class HttpClient {
-    private final String address;
     private final int port;
 
-    HttpClient(String address, int port){
-        this.address = address;
+    HttpClient(int port){
         this.port = port;
     }
 
     // Should I call it in send/get methods or while creating a client?
     public void connectToServer(){
-        System.out.println("Connecting server with address: " + address + " port: " + port);
+        System.out.println("Connecting server with port: " + port);
         //TODO
     }
 
