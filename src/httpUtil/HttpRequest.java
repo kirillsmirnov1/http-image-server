@@ -48,9 +48,12 @@ public class HttpRequest {
                 "\r\n"; // Required blank line
     }
 
-    public String preparePostRequest(){
-        // TODO
-        return null;
+    public String preparePostRequestHeader(String fileName, long contentLength){
+        
+        return POST + " /" + fileName + " " + HTTP_1_1 + "\r\n" +
+                CONTENT_TYPE + " " + parseType(fileName) + "\r\n" +
+                CONTENT_LENGTH + " " + contentLength + "\r\n" +
+                "\r\n";
     }
 
     private String parseType(String fileName) {
