@@ -11,6 +11,7 @@ public class HttpServer {
 
     private final String address;
     private final int port;
+    private boolean acceptingConnections = true;
 
     HttpServer(String address, int port){
         this.address = address;
@@ -23,7 +24,7 @@ public class HttpServer {
         try(ServerSocket serverSocket = new ServerSocket(port)){
             System.out.println("Server started, but you can't stop it");
 
-            while (true){
+            while (acceptingConnections){ // FIXME for some reason, it accepts one more connection
 
                 try(Socket clientSocket = serverSocket.accept();
                     InputStreamReader isr = new InputStreamReader(clientSocket.getInputStream());
@@ -51,6 +52,7 @@ public class HttpServer {
     }
 
     public void stop(){
+        acceptingConnections = false;
         System.out.println("Server stopped, I guess");
         // TODO
     }
