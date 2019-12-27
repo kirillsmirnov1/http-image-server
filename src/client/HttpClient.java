@@ -69,6 +69,12 @@ public class HttpClient {
 
     public void stop() {
         System.out.println("Should destroy connection to server");
-        // TODO
+
+        try {
+            outputStream.close();
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
