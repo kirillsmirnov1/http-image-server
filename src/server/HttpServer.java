@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
-public class HttpServer {
+public class HttpServer implements Runnable{
 
     private final String address;
     private final int port;
@@ -18,11 +18,12 @@ public class HttpServer {
         this.port = port;
     }
 
+    @Override
     public void run(){
         // TODO start a thread which checks input connections
 
         try(ServerSocket serverSocket = new ServerSocket(port)){
-            System.out.println("Server started, but you can't stop it");
+            System.out.println("Server started");
 
             while (acceptingConnections){ // FIXME for some reason, it accepts one more connection
 
