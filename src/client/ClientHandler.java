@@ -3,7 +3,7 @@ package client;
 import java.io.File;
 import java.util.Scanner;
 
-public class Main {
+public class ClientHandler {
     public static void main(String[] args) {
         HttpClient httpClient = new HttpClient(8080);
         httpClient.connectToServer();

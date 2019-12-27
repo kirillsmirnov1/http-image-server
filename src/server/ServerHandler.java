@@ -2,7 +2,7 @@ package server;
 
 import java.util.Scanner;
 
-public class Main {
+public class ServerHandler {
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8080);
         Thread serverThread = new Thread(httpServer);
