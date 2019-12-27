@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        HttpServer httpServer = new HttpServer("127.0.0.1", 80);
+        HttpServer httpServer = new HttpServer("127.0.0.1", 8080);
 
         System.out.println("Starting server");
         httpServer.run();
