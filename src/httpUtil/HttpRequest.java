@@ -18,7 +18,7 @@ public class HttpRequest {
         try {
             String line = reader.readLine();
 
-            while(!line.isEmpty()){ // FIXME does /r/n goes as empty line?
+            while(!line.isBlank()){
                 String[] tokens = line.split(" ");
 
                 switch (tokens[0]){
