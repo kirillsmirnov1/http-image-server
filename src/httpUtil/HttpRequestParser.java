@@ -23,7 +23,9 @@ public class HttpRequestParser {
                     case GET:
                     case HEAD: {
                         header.setMethod(HttpMethod.valueOf(tokens[0]));
-                        header.setFileName(tokens[1]); // TODO might need to check if there is actually something in there
+
+                        // Implying that we are storing all files in server root
+                        header.setFileName(tokens[1].substring(tokens[1].lastIndexOf("/") + 1)); // TODO might need to check if there is actually something in there
                         break;
                     }
                     case CONTENT_LENGTH: {
