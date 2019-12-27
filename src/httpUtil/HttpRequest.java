@@ -41,9 +41,11 @@ public class HttpRequest {
     }
 
 
-    public String prepareGetRequest(){
-        // TODO
-        return null;
+    public String prepareGetRequest(String fileName){
+
+        return GET + " " + fileName + " " + HTTP_1_1 + "\r\n" +
+                // TODO add Host, accept and what else
+                "\r\n"; // Required blank line
     }
 
     public String preparePostRequest(){
