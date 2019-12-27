@@ -1,16 +1,25 @@
 package client;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+
 public class HttpClient {
     private final int port;
+
+    private Socket socket;
 
     HttpClient(int port){
         this.port = port;
     }
 
-    // Should I call it in send/get methods or while creating a client?
     public void connectToServer(){
         System.out.println("Connecting server with port: " + port);
-        //TODO
+        try{
+            socket = new Socket(InetAddress.getByName(null), port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendPostRequest(String filename){
