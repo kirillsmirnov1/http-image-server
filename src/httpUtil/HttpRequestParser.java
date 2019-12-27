@@ -10,10 +10,12 @@ public class HttpRequestParser {
     public static HttpRequestHeader parseRequest(BufferedReader reader) {
         try {
             HttpRequestHeader header = new HttpRequestHeader();
+            StringBuilder headerContents = new StringBuilder();
 
             String line = reader.readLine();
 
             while(!line.isBlank()){
+                headerContents.append(line).append("\r\n");
                 String[] tokens = line.split(" ");
 
                 switch (tokens[0]){
@@ -30,6 +32,8 @@ public class HttpRequestParser {
                 }
                 line = reader.readLine();
             }
+
+            header.setHeaderContents(headerContents.toString());
 
             return header;
         } catch (IOException e) {
