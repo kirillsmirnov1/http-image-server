@@ -12,4 +12,7 @@ public interface Constants {
 
     // HTTP fields
     String CONTENT_LENGTH = "Content-Length:";
+
+    // Other HTTP constants
+    String HTTP_1_1 = "HTTP/1.1";
 }
