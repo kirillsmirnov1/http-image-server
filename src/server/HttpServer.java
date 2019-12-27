@@ -29,8 +29,8 @@ public class HttpServer implements Runnable{
                 try{
                     Socket clientSocket = serverSocket.accept();
 
-                    ClientConnection clientConnection = new ClientConnection(clientSocket);
-                    Thread clientThread = new Thread(clientConnection);
+                    ServerToClientConnection connection = new ServerToClientConnection(clientSocket);
+                    Thread clientThread = new Thread(connection);
                     clientThread.start();
 
                 } catch (SocketException e){

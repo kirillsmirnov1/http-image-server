@@ -7,11 +7,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 
-public class ClientConnection implements Runnable {
+public class ServerToClientConnection implements Runnable {
 
     private Socket socket;
 
-    ClientConnection(Socket socket){
+    ServerToClientConnection(Socket socket){
         this.socket = socket;
     }
 
