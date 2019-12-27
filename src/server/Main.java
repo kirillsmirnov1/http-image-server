@@ -5,11 +5,13 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer("127.0.0.1", 8080);
-
-        System.out.println("Starting server");
-        httpServer.run();
+        Thread serverThread = new Thread(httpServer);
 
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Starting server");
+
+        serverThread.start();
 
         System.out.println("You can stop server with STOP command");
 
