@@ -22,7 +22,7 @@ public class HttpRequest {
                 String[] tokens = line.split(" ");
 
                 switch (tokens[0]){
-                    case POST:
+                    case POST: // FIXME it would be better to use enum here, but POST.name() doesn't work here and I couldn't think of anything else
                     case GET:
                     case HEAD: {
                         method = HttpMethod.valueOf(tokens[0]);
