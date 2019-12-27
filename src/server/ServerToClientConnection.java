@@ -3,10 +3,7 @@ package server;
 import httpUtil.HttpRequestHeader;
 import httpUtil.HttpRequestParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ServerToClientConnection implements Runnable {
@@ -19,7 +16,8 @@ public class ServerToClientConnection implements Runnable {
 
     @Override
     public void run() {
-        try(InputStreamReader isr = new InputStreamReader(socket.getInputStream());
+        try(InputStream inputStream = socket.getInputStream();
+            InputStreamReader isr = new InputStreamReader(inputStream);
             BufferedReader reader = new BufferedReader(isr);
             OutputStream outputStream = socket.getOutputStream()){
 
@@ -36,9 +34,19 @@ public class ServerToClientConnection implements Runnable {
 
                 switch (header.getMethod()) {
                     case POST:
-                        System.out.println("Seems like a POST");
-                        isr.read(new char[header.getContentLength()], 0, (int) header.getContentLength());
-                        // TODO handle post request
+                        System.out.println(header.getHeaderContents());
+
+                        File file = new File(header.getFileName());
+
+                        byte[] bytes = new byte[header.getContentLength()];
+
+                        inputStream.read(bytes);
+
+                        new FileOutputStream(file).write(bytes);
+
+                        System.out.println("File saved");
+
+                        // TODO handle response
                         break;
                     case GET:
                         System.out.println("Seems like a GET");
