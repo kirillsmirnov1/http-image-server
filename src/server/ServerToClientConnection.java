@@ -1,11 +1,13 @@
 package server;
 
+import httpUtil.HttpRequestHeader;
+import httpUtil.HttpRequestParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Date;
 
 public class ServerToClientConnection implements Runnable {
 
@@ -21,21 +23,32 @@ public class ServerToClientConnection implements Runnable {
             BufferedReader reader = new BufferedReader(isr);
             OutputStream outputStream = socket.getOutputStream()){
 
-            System.out.println("\nClient sent: \n");
+            while(true) { // FIXME while(true)
 
-            String line = reader.readLine();
-            while (!line.isEmpty()) {
-                System.out.println(line);
-                line = reader.readLine();
+                System.out.println("\nClient sent: \n");
+
+                HttpRequestHeader header = HttpRequestParser.parseRequest(reader);
+
+                switch (header.getMethod()) {
+                    case POST:
+                        System.out.println("Seems like a POST");
+                        isr.read(new char[(int) header.getContentLength()], 0, (int) header.getContentLength());
+                        // TODO handle post request
+                        break;
+                    case GET:
+                        System.out.println("Seems like a GET");
+                        // TODO handle get request
+                        break;
+                    case HEAD:
+                        System.out.println("Seems like a HEAD");
+                        // TODO handle head request
+                        break;
+                    default:
+                        System.out.println("It doesn't look like anything to me");
+                        // TODO handle unknown request
+                }
             }
 
-            String httpResponse = "HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n" + new Date();
-
-            System.out.println("\nWe are sending: \n" + httpResponse);
-
-            outputStream.write(httpResponse.getBytes());
-
-            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
