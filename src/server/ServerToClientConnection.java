@@ -32,7 +32,7 @@ public class ServerToClientConnection implements Runnable {
                 switch (header.getMethod()) {
                     case POST:
                         System.out.println("Seems like a POST");
-                        isr.read(new char[(int) header.getContentLength()], 0, (int) header.getContentLength());
+                        isr.read(new char[header.getContentLength()], 0, header.getContentLength());
                         // TODO handle post request
                         break;
                     case GET:

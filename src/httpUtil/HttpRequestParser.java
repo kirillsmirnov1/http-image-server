@@ -26,7 +26,7 @@ public class HttpRequestParser {
                         break;
                     }
                     case CONTENT_LENGTH: {
-                        header.setContentLength(Long.parseLong(tokens[1]));
+                        header.setContentLength(Integer.parseInt(tokens[1]));
                     }
                 }
                 line = reader.readLine();
