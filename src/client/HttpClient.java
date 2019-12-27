@@ -53,8 +53,18 @@ public class HttpClient {
     }
 
     public void sendGetRequest(String filename){
-        System.out.println("Should send get request for " + filename);
-        // TODO
+
+        String header = HttpRequestParser.prepareGetRequest(filename);
+
+        System.out.println("\nSending\n" + header);
+
+        try {
+            outputStream.write(header.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO read response
     }
 
     public void stop() {
