@@ -8,7 +8,7 @@ import static httpUtil.Constants.*;
 public class ClientHandler {
     public static void main(String[] args) {
         HttpClient httpClient = new HttpClient(8080);
-        httpClient.connectToServer();
+        httpClient.connectToServer(); // FIXME handle server being offline
 
         handleInput(httpClient);
     }
