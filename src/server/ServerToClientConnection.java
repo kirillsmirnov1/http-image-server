@@ -25,14 +25,19 @@ public class ServerToClientConnection implements Runnable {
 
             while(true) { // FIXME while(true)
 
-                System.out.println("\nClient sent: \n");
-
                 HttpRequestHeader header = HttpRequestParser.parseRequest(reader);
+
+                if(header == null){
+                    socket.close();
+                    break;
+                }
+
+                System.out.println("\nClient sent: \n");
 
                 switch (header.getMethod()) {
                     case POST:
                         System.out.println("Seems like a POST");
-                        isr.read(new char[header.getContentLength()], 0, header.getContentLength());
+                        isr.read(new char[header.getContentLength()], 0, (int) header.getContentLength());
                         // TODO handle post request
                         break;
                     case GET:
