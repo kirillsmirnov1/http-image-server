@@ -60,8 +60,9 @@ public class HttpServer implements Runnable, PropertyChangeListener {
 
     public void stop(){
         acceptingConnections = false;
-        for(ServerToClientConnection connection : connections){
-            connection.timeToCloseConnection();
+
+        while(connections.peek() != null){
+            connections.poll().timeToCloseConnection();
         }
 
         try {
@@ -78,13 +79,8 @@ public class HttpServer implements Runnable, PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals(PROPERTY_SOCKET_OPEN) && ((SocketStatus)evt.getSource()).socketClosed()){
-            connections.poll();
-
-            System.out.println("Polled socket");
-
-            if(connections.size() < 1){
-                System.out.println("All connections are closed");
-            }
+            // FIXME store socket references with ids
+            System.out.println(connections.size() + " sockets in queue");
         }
     }
 }
