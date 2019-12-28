@@ -46,6 +46,13 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 HttpRequestHeader header = new HttpRequestParser().parseRequest(reader);
 
+                if(header == null){
+                    break;
+                }
+
+                System.out.println("\nClient sent: \n");
+                System.out.println(header.toString());
+
                 if(ServerHandler.slowServer){
                     try {
                         System.out.println("Intentionally slowing server down");
@@ -54,12 +61,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                         e.printStackTrace();
                     }
                 }
-
-                if(header == null){
-                    break;
-                }
-
-                System.out.println("\nClient sent: \n");
 
                 switch (header.getMethod()) {
                     case POST:
@@ -93,8 +94,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     private void handleGetRequest(HttpRequestHeader header) {
 
-        System.out.println(header.toString());
-
         File file = new File(header.getFileName());
 
         if(file.exists()){
@@ -122,7 +121,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
     }
 
     private void handlePostRequest(HttpRequestHeader header) {
-        System.out.println(header.toString());
 
         byte[] bytes = new byte[header.getContentLength()];
 
