@@ -1,16 +1,16 @@
 package httpUtil;
 
 public class HttpResponseHeader {
-    private String code;
+    private HttpCode code;
     private int contentLength;
 
     String headerContents;
 
-    public String getCode() {
+    public HttpCode getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(HttpCode code) {
         this.code = code;
     }
 
