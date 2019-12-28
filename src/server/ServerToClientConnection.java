@@ -131,6 +131,7 @@ public class ServerToClientConnection implements Runnable {
 
         try {
             outputStream.write(jsonResponse.getBytes());
+            System.out.println("Response send");
         } catch (IOException e) {
             System.out.println("Couldn't response to client");
             closeConnection();
