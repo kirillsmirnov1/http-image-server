@@ -33,7 +33,7 @@ public class HttpRequestHeader {
 
     private static String parseType(String fileName) {
 
-        switch(fileName.replaceAll("^[^.]*.", "").toLowerCase()){ // FIXME that actually catches only first dot
+        switch(fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase()){
             case "jpg":
             case "jpeg":
                 return IMAGE_JPEG;
