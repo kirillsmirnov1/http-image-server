@@ -2,6 +2,7 @@ package httpUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.SocketException;
 
 import static httpUtil.Constants.*;
 
@@ -38,10 +39,10 @@ public class HttpRequestParser {
             header.setHeaderContents(headerContents.toString());
 
             return header;
+        } catch (SocketException | NullPointerException e){
+            System.out.println("Connection to client seems to be closed");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e){
-            System.out.println("Connection seems to be broken");
         }
         return null;
     }
