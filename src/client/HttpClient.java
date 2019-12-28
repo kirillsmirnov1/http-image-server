@@ -1,5 +1,6 @@
 package client;
 
+import httpUtil.HttpMethod;
 import httpUtil.HttpRequestParser;
 import httpUtil.HttpResponseHeader;
 import httpUtil.HttpResponseParser;
@@ -15,6 +16,7 @@ public class HttpClient {
     private Socket socket;
     private OutputStream outputStream;
     private BufferedReader bufferedReader;
+    private InputStream inputStream;
 
     private boolean connected = false;
 
@@ -27,7 +29,7 @@ public class HttpClient {
         try{
             socket = new Socket(InetAddress.getByName(null), port);
 
-            InputStream inputStream = socket.getInputStream();
+            inputStream = socket.getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -58,10 +60,10 @@ public class HttpClient {
             return;
         }
 
-        readResponse();
+        readResponse(HttpMethod.POST, filename); // FIXME it would be nice to pass an HttpRequestHeader there
     }
 
-    private void readResponse() {
+    private void readResponse(HttpMethod method, String filename) {
 
         HttpResponseHeader responseHeader = HttpResponseParser.parseResponse(bufferedReader);
 
@@ -76,16 +78,35 @@ public class HttpClient {
         // TODO What should client do in that case?
         switch (responseHeader.getCode()){
             case OK_200:
-                //TODO
+
+                byte[] buffer = new byte[responseHeader.getContentLength()];
+
+                try {
+                    inputStream.read(buffer);
+                    switch (method){
+                        case GET:
+                            File file = new File(filename);
+                            new FileOutputStream(file).write(buffer);
+                            System.out.println("File " + filename + " saved");
+                            break;
+                        case POST:
+                            System.out.println("Server got file\n" + new String(buffer));
+                            break;
+                    }
+                } catch (IOException e) {
+                    System.out.println("Couldn't read server response");
+                    connected = false;
+                }
+
                 break;
             case NOT_FOUND_404:
-                //TODO
+                System.out.println("Server couldn't find requested file");
                 break;
             case NOT_ALLOWED_405:
-                //TODO
+                System.out.println("Server can't handle request");
                 break;
             case SERVER_ERROR_500:
-                //TODO
+                System.out.println("Server failed at handling request");
                 break;
             default:
                 System.out.println("Code unknown");
@@ -107,7 +128,7 @@ public class HttpClient {
             return;
         }
 
-        readResponse();
+        readResponse(HttpMethod.GET, filename);
     }
 
     public void stop() {
