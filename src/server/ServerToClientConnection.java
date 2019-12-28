@@ -6,9 +6,18 @@ import httpUtil.HttpRequestParser;
 import java.io.*;
 import java.net.Socket;
 
+import static httpUtil.Constants.*;
+import static httpUtil.HttpResponseParser.prepareJSONFileName;
+import static httpUtil.HttpResponseParser.prepareResponseHeader;
+
 public class ServerToClientConnection implements Runnable {
 
     private Socket socket;
+
+    private boolean keepConnectionToAClient = true;
+
+    private InputStream inputStream;
+    private OutputStream outputStream;
 
     ServerToClientConnection(Socket socket){
         this.socket = socket;
@@ -16,17 +25,19 @@ public class ServerToClientConnection implements Runnable {
 
     @Override
     public void run() {
-        try(InputStream inputStream = socket.getInputStream();
+        try{
+            outputStream = socket.getOutputStream();
+
+            inputStream = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
             BufferedReader reader = new BufferedReader(isr);
-            OutputStream outputStream = socket.getOutputStream()){
 
-            while(true) { // FIXME while(true)
+            while(keepConnectionToAClient) {
 
                 HttpRequestHeader header = HttpRequestParser.parseRequest(reader);
 
                 if(header == null){
-                    socket.close();
+                    closeConnection();
                     break;
                 }
 
@@ -34,19 +45,7 @@ public class ServerToClientConnection implements Runnable {
 
                 switch (header.getMethod()) {
                     case POST:
-                        System.out.println(header.getHeaderContents());
-
-                        File file = new File(header.getFileName());
-
-                        byte[] bytes = new byte[header.getContentLength()];
-
-                        inputStream.read(bytes);
-
-                        new FileOutputStream(file).write(bytes);
-
-                        System.out.println("File saved");
-
-                        // TODO handle response
+                        handlePostRequest(header);
                         break;
                     case GET:
                         System.out.println("Seems like a GET");
@@ -64,6 +63,63 @@ public class ServerToClientConnection implements Runnable {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void closeConnection() {
+        try {
+            inputStream.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        keepConnectionToAClient = false;
+    }
+
+    private void handlePostRequest(HttpRequestHeader header) {
+        System.out.println(header.getHeaderContents());
+
+        byte[] bytes = new byte[header.getContentLength()];
+
+        try {
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            System.out.println("Couldn't read file from client");
+            closeConnection();
+            return;
+        }
+
+        try {
+            File file = new File(header.getFileName());
+
+            new FileOutputStream(file).write(bytes);
+
+            System.out.println("File saved");
+
+        } catch (IOException e) {
+            System.out.println("Couldn't save file");
+            sendResponseHeader(prepareResponseHeader(SERVER_ERROR_500));
+            return;
+        }
+
+        String jsonResponse = prepareJSONFileName(header.getFileName());
+
+        sendResponseHeader(prepareResponseHeader(OK_200, jsonResponse.length()));
+
+        try {
+            outputStream.write(jsonResponse.getBytes());
+        } catch (IOException e) {
+            System.out.println("Couldn't response to client");
+            closeConnection();
+        }
+    }
+
+    private void sendResponseHeader(String response) {
+        try {
+            outputStream.write(response.getBytes());
+        } catch (IOException e) {
+            System.out.println("Couldn't send a response");
+            closeConnection();
         }
     }
 }
