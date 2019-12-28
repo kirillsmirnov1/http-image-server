@@ -5,6 +5,7 @@ import httpUtil.HttpRequestParser;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 import static httpUtil.Constants.*;
 import static httpUtil.HttpResponseParser.prepareJSONFileName;
@@ -48,8 +49,7 @@ public class ServerToClientConnection implements Runnable {
                         handlePostRequest(header);
                         break;
                     case GET:
-                        System.out.println("Seems like a GET");
-                        // TODO handle get request
+                        handleGetRequest(header);
                         break;
                     case HEAD:
                         System.out.println("Seems like a HEAD");
@@ -63,6 +63,25 @@ public class ServerToClientConnection implements Runnable {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleGetRequest(HttpRequestHeader header) {
+
+        System.out.println(header.getHeaderContents());
+
+        File file = new File(header.getFileName());
+
+        if(file.exists()){
+            sendResponseHeader(prepareResponseHeader(OK_200, (int)file.length()));
+            try {
+                Files.copy(file.toPath(), outputStream);
+            } catch (IOException e) {
+                System.out.println("Couldn't write file to client");
+                closeConnection();
+            }
+        } else {
+            sendResponseHeader(prepareResponseHeader(NOT_FOUND_404));
         }
     }
 
