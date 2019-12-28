@@ -21,11 +21,13 @@ public class ServerHandler {
             String input = scanner.nextLine();
 
             if(input.toUpperCase().equals(STOP)){
-                httpServer.stop(); // TODO wait for server to stop
+                httpServer.stop();
                 break;
             } else {
                 System.out.println("Wrong input");
             }
         }
+
+        // TODO wait for all sockets to close
     }
 }
