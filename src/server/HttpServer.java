@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.HashMap;
 
 import static server.SocketStatus.PROPERTY_SOCKET_OPEN;
 
@@ -16,13 +15,15 @@ public class HttpServer implements Runnable, PropertyChangeListener {
     private final int port;
     private boolean acceptingConnections = true;
 
+    private int nextSocketId = 0;
+
     private ServerSocket serverSocket;
 
-    Queue<ServerToClientConnection> connections;
+    HashMap<Integer, ServerToClientConnection> connections;
 
     HttpServer(int port){
         this.port = port;
-        connections = new LinkedList<>();
+        connections = new HashMap<>();
     }
 
     @Override
@@ -40,13 +41,15 @@ public class HttpServer implements Runnable, PropertyChangeListener {
 
                     System.out.println("Client connected");
 
-                    ServerToClientConnection connection = new ServerToClientConnection(clientSocket);
+                    ServerToClientConnection connection = new ServerToClientConnection(clientSocket, nextSocketId);
                     Thread clientThread = new Thread(connection);
                     clientThread.start();
 
                     connection.getSocketStatus().addPropertyChangeListener("socketOpen", this);
 
-                    connections.add(connection);
+                    connections.put(nextSocketId, connection);
+
+                    nextSocketId++;
 
                 } catch (SocketException e){
                     System.out.println("Closed server socket");
@@ -61,8 +64,8 @@ public class HttpServer implements Runnable, PropertyChangeListener {
     public void stop(){
         acceptingConnections = false;
 
-        while(connections.peek() != null){
-            connections.poll().timeToCloseConnection();
+        for(ServerToClientConnection connection : connections.values()){
+            connection.timeToCloseConnection();
         }
 
         try {
@@ -78,9 +81,11 @@ public class HttpServer implements Runnable, PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(PROPERTY_SOCKET_OPEN) && ((SocketStatus)evt.getSource()).socketClosed()){
-            // FIXME store socket references with ids
-            System.out.println(connections.size() + " sockets in queue");
+
+        SocketStatus socketStatus = (SocketStatus) evt.getSource();
+
+        if(evt.getPropertyName().equals(PROPERTY_SOCKET_OPEN) && socketStatus.socketClosed()){
+            connections.remove(socketStatus.getId());
         }
     }
 }

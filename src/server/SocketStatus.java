@@ -7,6 +7,7 @@ class SocketStatus {
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private boolean activeTransaction = false;
     private boolean socketOpen = true;
+    private int id;
 
     public final static String PROPERTY_SOCKET_OPEN = "socketOpen";
     public final static String PROPERTY_ACTIVE_TRANSACTION = "activeTransaction";
@@ -53,5 +54,13 @@ class SocketStatus {
             this.socketOpen = socketOpen;
             changes.firePropertyChange(PROPERTY_SOCKET_OPEN, !socketOpen, socketOpen);
         }
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

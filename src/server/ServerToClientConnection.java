@@ -26,8 +26,10 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     private SocketStatus socketStatus = new SocketStatus();
 
-    ServerToClientConnection(Socket socket){
+    ServerToClientConnection(Socket socket, int id){
         this.socket = socket;
+        socketStatus.setId(id);
+
         socketStatus.addPropertyChangeListener("activeTransaction", this);
     }
 
