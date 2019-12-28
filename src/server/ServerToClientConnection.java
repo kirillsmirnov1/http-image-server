@@ -173,6 +173,10 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
         }
     }
 
+    public SocketStatus getSocketStatus() {
+        return socketStatus;
+    }
+
     private class HttpRequestParser {
 
         public HttpRequestHeader parseRequest(BufferedReader reader) {
