@@ -22,7 +22,7 @@ public class HttpResponseParser {
 
                 switch (tockens[0]){
                     case HTTP_1_1:
-                        header.setCode(HttpCode.valueOf(tockens[1]));
+                        header.setCode(HttpCode.codeOf(tockens[1]));
                         break;
                     case CONTENT_LENGTH:
                         header.setContentLength(Integer.parseInt(tockens[1]));
