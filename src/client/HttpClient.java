@@ -17,6 +17,7 @@ public class HttpClient {
     private OutputStream outputStream;
     private BufferedReader bufferedReader;
     private InputStream inputStream;
+    private InputStreamReader inputStreamReader;
 
     private boolean connected = false;
 
@@ -30,7 +31,7 @@ public class HttpClient {
             socket = new Socket(InetAddress.getByName(null), port);
 
             inputStream = socket.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            inputStreamReader = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(inputStreamReader);
 
             outputStream = socket.getOutputStream();
@@ -79,18 +80,22 @@ public class HttpClient {
         switch (responseHeader.getCode()){
             case OK_200:
 
-                byte[] buffer = new byte[responseHeader.getContentLength()];
-
                 try {
-                    inputStream.read(buffer);
                     switch (method){
                         case GET:
+                            byte[] buffer = new byte[responseHeader.getContentLength()];
+                            inputStream.read(buffer);
+
                             File file = new File(filename);
                             new FileOutputStream(file).write(buffer);
                             System.out.println("File " + filename + " saved");
                             break;
                         case POST:
-                            System.out.println("Server got file\n" + new String(buffer));
+                            String line;
+                            do{
+                                line = bufferedReader.readLine();
+                                System.out.println(line);
+                            } while (!line.isEmpty());
                             break;
                     }
                 } catch (IOException e) {
