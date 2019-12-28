@@ -36,7 +36,7 @@ public class HttpResponseParser {
 
             return header;
 
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             System.out.println("Couldn't read response header");
         }
         return null;
