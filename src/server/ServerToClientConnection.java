@@ -38,7 +38,6 @@ public class ServerToClientConnection implements Runnable {
                 HttpRequestHeader header = HttpRequestParser.parseRequest(reader);
 
                 if(header == null){
-                    closeConnection();
                     break;
                 }
 
@@ -59,6 +58,8 @@ public class ServerToClientConnection implements Runnable {
                         handleUnknownRequest(header);
                 }
             }
+
+            closeConnection();
 
         } catch (IOException e) {
             e.printStackTrace();
