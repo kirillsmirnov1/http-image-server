@@ -60,6 +60,6 @@ public class HttpResponseParser {
     }
 
     public static String prepareJSONFileName(String fileName) {
-        return "{\r\n\t\"file\": \"" + fileName + "\"\r\n}";
+        return "{\r\n\t\"file\": \"" + fileName + "\"\r\n}\r\n\r\n";
     }
 }
