@@ -30,6 +30,14 @@ public class ServerHandler {
             }
         }
 
-        // TODO wait for all sockets to close
+        while (httpServer.connections.size() != 0) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("Server terminated");
     }
 }
