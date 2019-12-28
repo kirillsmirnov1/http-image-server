@@ -100,13 +100,13 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
     }
 
     private void closeConnection() {
+        keepConnectionToAClient = false;
         try {
             inputStream.close();
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        keepConnectionToAClient = false;
     }
 
     private void handlePostRequest(HttpRequestHeader header) {
@@ -210,35 +210,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                 e.printStackTrace();
             }
             return null;
-        }
-    }
-
-    private class TransactionStatus {
-        private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-        private boolean active = false;
-
-        public boolean isNotActive(){
-            return !active;
-        }
-
-        public void addPropertyChangeListener(PropertyChangeListener l) {
-            changes.addPropertyChangeListener(l);
-        }
-
-        public TransactionStatus(){
-
-        }
-
-        public void setActive(boolean active){
-            this.active = active;
-        }
-
-        public void removePropertyChangeListener(PropertyChangeListener l) {
-            changes.removePropertyChangeListener(l);
-        }
-
-        public boolean getActive(){
-            return active;
         }
     }
 }
