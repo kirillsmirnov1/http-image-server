@@ -94,6 +94,10 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     private void handleGetRequest(HttpRequestHeader header) {
 
+        if(header.getFileName().equals("")){
+            header.setFileName("index.html");
+        }
+
         File file = new File(header.getFileName());
 
         if(file.exists()){
@@ -206,8 +210,15 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                         case HEAD: {
                             header.setMethod(HttpMethod.valueOf(tokens[0]));
 
+                            String filename;
+                            if(tokens[1].contains("/?")){
+                                filename = tokens[1].substring(tokens[1].lastIndexOf("=") + 1);
+                            } else { // FIXME I should send correct request
+                                filename = tokens[1].substring(tokens[1].lastIndexOf("/") + 1);
+                            }
+
                             // Implying that we are storing all files in server root
-                            header.setFileName(tokens[1].substring(tokens[1].lastIndexOf("/") + 1)); // TODO might need to check if there is actually something in there
+                            header.setFileName(filename); // TODO might need to check if there is actually something in there
                             break;
                         }
                         case CONTENT_LENGTH: {
