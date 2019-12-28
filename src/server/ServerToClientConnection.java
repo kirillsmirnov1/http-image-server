@@ -3,19 +3,19 @@ package server;
 import httpUtil.HttpMethod;
 import httpUtil.HttpRequestHeader;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.Files;
-import java.util.Observable;
-import java.util.Observer;
 
 import static httpUtil.Constants.*;
 import static httpUtil.HttpResponseParser.prepareJSONFileName;
 import static httpUtil.HttpResponseParser.prepareResponseHeader;
 
-// FIXME Observer/Observable are deprecated, use concurrency
-public class ServerToClientConnection implements Runnable, Observer {
+public class ServerToClientConnection implements Runnable, PropertyChangeListener {
 
     private Socket socket;
 
@@ -28,7 +28,7 @@ public class ServerToClientConnection implements Runnable, Observer {
 
     ServerToClientConnection(Socket socket){
         this.socket = socket;
-        transactionStatus.addObserver(this);
+        transactionStatus.addPropertyChangeListener(this);
     }
 
     @Override
@@ -165,8 +165,8 @@ public class ServerToClientConnection implements Runnable, Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        if(o == transactionStatus){
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getSource() == transactionStatus){
             if(!keepConnectionToAClient && transactionStatus.isNotActive()){
                 closeConnection();
             }
@@ -213,17 +213,32 @@ public class ServerToClientConnection implements Runnable, Observer {
         }
     }
 
-    private class TransactionStatus extends Observable{
+    private class TransactionStatus {
+        private PropertyChangeSupport changes = new PropertyChangeSupport(this);
         private boolean active = false;
-
-        public void setActive(boolean active){
-            this.active = active;
-            setChanged();
-            notifyObservers();
-        }
 
         public boolean isNotActive(){
             return !active;
+        }
+
+        public void addPropertyChangeListener(PropertyChangeListener l) {
+            changes.addPropertyChangeListener(l);
+        }
+
+        public TransactionStatus(){
+
+        }
+
+        public void setActive(boolean active){
+            this.active = active;
+        }
+
+        public void removePropertyChangeListener(PropertyChangeListener l) {
+            changes.removePropertyChangeListener(l);
+        }
+
+        public boolean getActive(){
+            return active;
         }
     }
 }
