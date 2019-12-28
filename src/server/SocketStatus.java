@@ -26,6 +26,7 @@ class SocketStatus {
 
     public void setActiveTransaction(boolean activeTransaction){
         this.activeTransaction = activeTransaction;
+        changes.firePropertyChange("activeTransaction", !activeTransaction, activeTransaction);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener l) {
@@ -45,6 +46,9 @@ class SocketStatus {
     }
 
     public void setSocketOpen(boolean socketOpen) {
-        this.socketOpen = socketOpen;
+        if(this.socketOpen) { // Socket can be closed only once
+            this.socketOpen = socketOpen;
+            changes.firePropertyChange("socketOpen", !socketOpen, socketOpen);
+        }
     }
 }
