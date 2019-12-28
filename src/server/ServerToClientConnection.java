@@ -106,6 +106,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
         } catch (IOException e) {
             e.printStackTrace();
         }
+        socketStatus.setSocketOpen(false);
     }
 
     private void handlePostRequest(HttpRequestHeader header) {
