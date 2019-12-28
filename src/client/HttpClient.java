@@ -1,6 +1,8 @@
 package client;
 
 import httpUtil.HttpRequestParser;
+import httpUtil.HttpResponseHeader;
+import httpUtil.HttpResponseParser;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -56,7 +58,38 @@ public class HttpClient {
             return;
         }
 
-        // TODO read response
+        readResponse();
+    }
+
+    private void readResponse() {
+
+        HttpResponseHeader responseHeader = HttpResponseParser.parseResponse(bufferedReader);
+
+        if(responseHeader == null){
+            connected = false;
+            return;
+        }
+
+        System.out.println("Server response\n" + responseHeader.getHeaderContents());
+
+        // FIXME rn it will accept file, even if it wasn't requested
+        switch (responseHeader.getCode()){
+            case OK_200:
+                //TODO
+                break;
+            case NOT_FOUND_404:
+                //TODO
+                break;
+            case NOT_ALLOWED_405:
+                //TODO
+                break;
+            case SERVER_ERROR_500:
+                //TODO
+                break;
+            default:
+                System.out.println("Code unknown");
+        }
+
     }
 
     public void sendGetRequest(String filename){
@@ -73,7 +106,7 @@ public class HttpClient {
             return;
         }
 
-        // TODO read response
+        readResponse();
     }
 
     public void stop() {
