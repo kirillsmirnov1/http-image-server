@@ -6,6 +6,7 @@ import java.beans.PropertyChangeSupport;
 class SocketStatus {
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private boolean activeTransaction = false;
+    private boolean socketOpen = true;
 
     public boolean transactionIsNotActive(){
         return !activeTransaction;
@@ -29,5 +30,17 @@ class SocketStatus {
 
     public boolean getActiveTransaction(){
         return activeTransaction;
+    }
+
+    public boolean socketClosed() {
+        return !socketOpen;
+    }
+
+    public boolean isSocketOpen() {
+        return socketOpen;
+    }
+
+    public void setSocketOpen(boolean socketOpen) {
+        this.socketOpen = socketOpen;
     }
 }
