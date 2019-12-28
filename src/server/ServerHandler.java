@@ -5,13 +5,14 @@ import java.util.Scanner;
 import static httpUtil.Constants.STOP;
 
 public class ServerHandler {
-    public static boolean slowServer = true;
+    public static boolean slowServer = false;
 
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8080);
         Thread serverThread = new Thread(httpServer);
-
         Scanner scanner = new Scanner(System.in);
+
+        handleArgs(args);
 
         System.out.println("Starting server");
 
@@ -39,5 +40,13 @@ public class ServerHandler {
         }
 
         System.out.println("Server terminated");
+    }
+
+    private static void handleArgs(String[] args) {
+        for(int i = 0; i < args.length; ++i){ // using basic for in case of adding arguments like ip and port
+            if(args[i].equals("-slow")){
+                slowServer = true;
+            }
+        }
     }
 }
