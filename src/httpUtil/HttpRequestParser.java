@@ -10,13 +10,11 @@ public class HttpRequestParser {
 
     public static HttpRequestHeader parseRequest(BufferedReader reader) {
         try {
-            HttpRequestHeader header = new HttpRequestHeader();
-            StringBuilder headerContents = new StringBuilder();
+            HttpRequestHeader header = new HttpRequestHeader(null, null, -1);
 
             String line = reader.readLine();
 
             while(!line.isEmpty()){
-                headerContents.append(line).append("\r\n");
                 String[] tokens = line.split(" ");
 
                 switch (tokens[0]){
@@ -36,8 +34,6 @@ public class HttpRequestParser {
                 line = reader.readLine();
             }
 
-            header.setHeaderContents(headerContents.toString());
-
             return header;
         } catch (SocketException | NullPointerException e){
             System.out.println("Connection to client seems to be closed");
@@ -45,38 +41,5 @@ public class HttpRequestParser {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    public static String prepareGetRequest(String fileName){
-
-        return GET + " " + fileName + " " + HTTP_1_1 + "\r\n" +
-                // TODO add Host, accept and what else
-                "\r\n"; // Required blank line
-    }
-
-    public static String preparePostRequestHeader(String fileName, long contentLength){
-
-        return POST + " /" + fileName + " " + HTTP_1_1 + "\r\n" +
-                CONTENT_TYPE + " " + parseType(fileName) + "\r\n" +
-                CONTENT_LENGTH + " " + contentLength + "\r\n" +
-                "\r\n";
-    }
-
-    private static String parseType(String fileName) {
-
-        switch(fileName.replaceAll("^[^.]*.", "").toLowerCase()){ // FIXME that actually catches only first dot
-            case "jpg":
-            case "jpeg":
-                return IMAGE_JPEG;
-            case "bmp":
-                return IMAGE_BMP;
-            case "gif":
-                return IMAGE_GIF;
-            case "png":
-                return IMAGE_PNG;
-            default:
-                return APPLICATION_OCTET_STREAM;
-        }
     }
 }

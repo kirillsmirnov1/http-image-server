@@ -67,13 +67,13 @@ public class ServerToClientConnection implements Runnable {
     }
 
     private void handleUnknownRequest(HttpRequestHeader header) {
-        System.out.println(header.getHeaderContents());
+        System.out.println(header.toString());
         sendResponseHeader(prepareResponseHeader(NOT_ALLOWED_405));
     }
 
     private void handleGetRequest(HttpRequestHeader header) {
 
-        System.out.println(header.getHeaderContents());
+        System.out.println(header.toString());
 
         File file = new File(header.getFileName());
 
@@ -101,7 +101,7 @@ public class ServerToClientConnection implements Runnable {
     }
 
     private void handlePostRequest(HttpRequestHeader header) {
-        System.out.println(header.getHeaderContents());
+        System.out.println(header.toString());
 
         byte[] bytes = new byte[header.getContentLength()];
 

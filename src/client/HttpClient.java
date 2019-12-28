@@ -1,14 +1,14 @@
 package client;
 
-import httpUtil.HttpMethod;
-import httpUtil.HttpRequestParser;
-import httpUtil.HttpResponseHeader;
-import httpUtil.HttpResponseParser;
+import httpUtil.*;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.file.Files;
+
+import static httpUtil.HttpMethod.GET;
+import static httpUtil.HttpMethod.POST;
 
 public class HttpClient {
     private final int port;
@@ -48,7 +48,7 @@ public class HttpClient {
 
         File file = new File(filename);
 
-        String header = HttpRequestParser.preparePostRequestHeader(filename, file.length());
+        String header = new HttpRequestHeader(POST, filename, (int)file.length()).toString();
 
         System.out.println("\nSending\n" + header);
 
@@ -61,7 +61,7 @@ public class HttpClient {
             return;
         }
 
-        readResponse(HttpMethod.POST, filename); // FIXME it would be nice to pass an HttpRequestHeader there
+        readResponse(POST, filename); // FIXME it would be nice to pass an HttpRequestHeader there
     }
 
     private void readResponse(HttpMethod method, String filename) {
@@ -121,7 +121,7 @@ public class HttpClient {
 
     public void sendGetRequest(String filename){
 
-        String header = HttpRequestParser.prepareGetRequest(filename);
+        String header = new HttpRequestHeader(GET, filename, -1).toString();
 
         System.out.println("\nSending\n" + header);
 
