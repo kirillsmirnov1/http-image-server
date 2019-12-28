@@ -5,6 +5,8 @@ import java.util.Scanner;
 import static httpUtil.Constants.STOP;
 
 public class ServerHandler {
+    public static boolean slowServer = true;
+
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8080);
         Thread serverThread = new Thread(httpServer);

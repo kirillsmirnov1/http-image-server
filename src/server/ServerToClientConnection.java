@@ -188,6 +188,14 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 socketStatus.setActiveTransaction(true);
 
+                if(ServerHandler.slowServer){
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");
 
