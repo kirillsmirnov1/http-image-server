@@ -15,7 +15,7 @@ public class HttpRequestParser {
 
             String line = reader.readLine();
 
-            while(!line.isBlank()){
+            while(!line.isEmpty()){
                 headerContents.append(line).append("\r\n");
                 String[] tokens = line.split(" ");
 
