@@ -23,11 +23,11 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
     private InputStream inputStream;
     private OutputStream outputStream;
 
-    private TransactionStatus transactionStatus = new TransactionStatus();
+    private SocketStatus socketStatus = new SocketStatus();
 
     ServerToClientConnection(Socket socket){
         this.socket = socket;
-        transactionStatus.addPropertyChangeListener(this);
+        socketStatus.addPropertyChangeListener(this);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                         handleUnknownRequest(header);
                 }
 
-                transactionStatus.setActiveTransaction(false);
+                socketStatus.setActiveTransaction(false);
             }
 
             closeConnection();
@@ -158,15 +158,15 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     public void timeToCloseConnection(){
         keepConnectionToAClient = false;
-        if(transactionStatus.transactionIsNotActive()){ // If it is active, connection will be closed on update() call
+        if(socketStatus.transactionIsNotActive()){ // If it is active, connection will be closed on update() call
             closeConnection();
         }
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getSource() == transactionStatus){
-            if(!keepConnectionToAClient && transactionStatus.transactionIsNotActive()){
+        if(evt.getSource() == socketStatus){
+            if(!keepConnectionToAClient && socketStatus.transactionIsNotActive()){
                 closeConnection();
             }
         }
@@ -180,7 +180,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 String line = reader.readLine();
 
-                transactionStatus.setActiveTransaction(true);
+                socketStatus.setActiveTransaction(true);
 
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");

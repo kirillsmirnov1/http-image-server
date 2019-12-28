@@ -3,7 +3,7 @@ package server;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-class TransactionStatus {
+class SocketStatus {
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private boolean activeTransaction = false;
 
@@ -15,7 +15,7 @@ class TransactionStatus {
         changes.addPropertyChangeListener(l);
     }
 
-    public TransactionStatus(){
+    public SocketStatus(){
 
     }
 
