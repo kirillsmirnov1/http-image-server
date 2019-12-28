@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import static httpUtil.Constants.*;
 import static httpUtil.HttpResponseParser.prepareJSONFileName;
 import static httpUtil.HttpResponseParser.prepareResponseHeader;
+import static server.SocketStatus.PROPERTY_ACTIVE_TRANSACTION;
 
 public class ServerToClientConnection implements Runnable, PropertyChangeListener {
 
@@ -27,7 +28,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     ServerToClientConnection(Socket socket){
         this.socket = socket;
-        socketStatus.addPropertyChangeListener(this);
+        socketStatus.addPropertyChangeListener("activeTransaction", this);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getSource() == socketStatus){
+        if(evt.getPropertyName().equals(PROPERTY_ACTIVE_TRANSACTION)){
             if(!keepConnectionToAClient && socketStatus.transactionIsNotActive()){
                 closeConnection();
             }

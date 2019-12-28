@@ -8,6 +8,9 @@ class SocketStatus {
     private boolean activeTransaction = false;
     private boolean socketOpen = true;
 
+    public final static String PROPERTY_SOCKET_OPEN = "socketOpen";
+    public final static String PROPERTY_ACTIVE_TRANSACTION = "activeTransaction";
+
     public boolean transactionIsNotActive(){
         return !activeTransaction;
     }
@@ -26,7 +29,7 @@ class SocketStatus {
 
     public void setActiveTransaction(boolean activeTransaction){
         this.activeTransaction = activeTransaction;
-        changes.firePropertyChange("activeTransaction", !activeTransaction, activeTransaction);
+        changes.firePropertyChange(PROPERTY_ACTIVE_TRANSACTION, !activeTransaction, activeTransaction);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener l) {
@@ -48,7 +51,7 @@ class SocketStatus {
     public void setSocketOpen(boolean socketOpen) {
         if(this.socketOpen) { // Socket can be closed only once
             this.socketOpen = socketOpen;
-            changes.firePropertyChange("socketOpen", !socketOpen, socketOpen);
+            changes.firePropertyChange(PROPERTY_SOCKET_OPEN, !socketOpen, socketOpen);
         }
     }
 }

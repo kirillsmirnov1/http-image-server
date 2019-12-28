@@ -9,6 +9,8 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static server.SocketStatus.PROPERTY_SOCKET_OPEN;
+
 public class HttpServer implements Runnable, PropertyChangeListener {
 
     private final int port;
@@ -42,7 +44,7 @@ public class HttpServer implements Runnable, PropertyChangeListener {
                     Thread clientThread = new Thread(connection);
                     clientThread.start();
 
-                    connection.getSocketStatus().addPropertyChangeListener(this);
+                    connection.getSocketStatus().addPropertyChangeListener("socketOpen", this);
 
                     connections.add(connection);
 
@@ -75,7 +77,7 @@ public class HttpServer implements Runnable, PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(((SocketStatus)evt.getSource()).socketClosed()){
+        if(evt.getPropertyName().equals(PROPERTY_SOCKET_OPEN) && ((SocketStatus)evt.getSource()).socketClosed()){
             connections.poll();
 
             System.out.println("Polled socket");
