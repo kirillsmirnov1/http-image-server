@@ -6,19 +6,35 @@ import java.util.Scanner;
 import static httpUtil.Constants.*;
 
 public class ClientHandler {
+
+    private static boolean keepConnection = true;
+
     public static void main(String[] args) {
         HttpClient httpClient = new HttpClient(8080);
-        httpClient.connectToServer(); // FIXME handle server being offline
 
-        handleInput(httpClient);
+        while(keepConnection) {
+            httpClient.connectToServer(); // FIXME handle server being offline
+
+            handleInput(httpClient);
+
+            handleDisconnect();
+        }
+    }
+
+    private static void handleDisconnect() {
+        if(keepConnection) {
+            System.out.print("Connection seems to be lost. Wanna reconnect? [Y/N]: ");
+            keepConnection = new Scanner(System.in).nextLine().matches("[Yy]]*");
+        }
     }
 
     private static void handleInput(HttpClient httpClient) {
-        System.out.println("\nYou can use POST [filename], GET [filename] and STOP commands\n");
         Scanner scanner = new Scanner(System.in);
 
-        while (true){
+        while (httpClient.isConnected()){
+            System.out.println("\nYou can use POST [filename], GET [filename] and STOP commands\n");
             String[] input = scanner.nextLine().split(" ");
+
             switch (input[0].toUpperCase()){
                 case POST:
                     if(filenameIsFine(input)){
@@ -32,6 +48,7 @@ public class ClientHandler {
                     break;
                 case STOP:
                     httpClient.stop();
+                    keepConnection = false;
                     return;
                 default:
                     System.out.println("Wrong command");

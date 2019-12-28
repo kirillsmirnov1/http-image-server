@@ -14,6 +14,8 @@ public class HttpClient {
     private OutputStream outputStream;
     private BufferedReader bufferedReader;
 
+    private boolean connected = false;
+
     HttpClient(int port){
         this.port = port;
     }
@@ -29,8 +31,11 @@ public class HttpClient {
 
             outputStream = socket.getOutputStream();
 
+            connected = true;
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Couldn't connect to a server");
+            connected = false;
         }
     }
 
@@ -46,7 +51,9 @@ public class HttpClient {
             outputStream.write(header.getBytes());
             Files.copy(file.toPath(), outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Couldn't send POST request to a server");
+            connected = false;
+            return;
         }
 
         // TODO read response
@@ -61,14 +68,18 @@ public class HttpClient {
         try {
             outputStream.write(header.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Couldn't send GET request to a server");
+            connected = false;
+            return;
         }
 
         // TODO read response
     }
 
     public void stop() {
-        System.out.println("Should destroy connection to server");
+        System.out.println("Destroying connection to server");
+
+        connected = false;
 
         try {
             outputStream.close();
@@ -76,5 +87,9 @@ public class HttpClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }
