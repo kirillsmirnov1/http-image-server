@@ -147,4 +147,8 @@ public class ServerToClientConnection implements Runnable {
             closeConnection();
         }
     }
+
+    public void timeToCloseConnection(){
+        closeConnection(); // FIXME check if transaction is in work
+    }
 }
