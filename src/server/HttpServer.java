@@ -1,5 +1,7 @@
 package server;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,7 +9,7 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class HttpServer implements Runnable{
+public class HttpServer implements Runnable, PropertyChangeListener {
 
     private final int port;
     private boolean acceptingConnections = true;
@@ -40,6 +42,8 @@ public class HttpServer implements Runnable{
                     Thread clientThread = new Thread(connection);
                     clientThread.start();
 
+                    connection.getSocketStatus().addPropertyChangeListener(this);
+
                     connections.add(connection);
 
                 } catch (SocketException e){
@@ -67,5 +71,18 @@ public class HttpServer implements Runnable{
         System.out.println("Server stopping");
 
         // TODO handle waiting for end of client connections
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(((SocketStatus)evt.getSource()).socketClosed()){
+            connections.poll();
+
+            System.out.println("Polled socket");
+
+            if(connections.size() < 1){
+                System.out.println("All connections are closed");
+            }
+        }
     }
 }
