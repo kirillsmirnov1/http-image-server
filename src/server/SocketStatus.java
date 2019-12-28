@@ -16,6 +16,10 @@ class SocketStatus {
         changes.addPropertyChangeListener(l);
     }
 
+    public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+        changes.addPropertyChangeListener(property, listener);
+    }
+
     public SocketStatus(){
 
     }
