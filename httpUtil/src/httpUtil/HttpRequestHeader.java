@@ -24,7 +24,7 @@ public class HttpRequestHeader {
                         CONTENT_LENGTH + " " + contentLength + "\r\n" +
                         "\r\n";
             case GET:
-                return GET + " " + fileName + " " + HTTP_1_1 + "\r\n" +
+                return GET + " /" + fileName + " " + HTTP_1_1 + "\r\n" +
                         // TODO add Host, accept and what else
                         "\r\n"; // Required blank line
         }
