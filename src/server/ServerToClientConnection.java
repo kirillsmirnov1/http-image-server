@@ -7,12 +7,15 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.Files;
+import java.util.Observable;
+import java.util.Observer;
 
 import static httpUtil.Constants.*;
 import static httpUtil.HttpResponseParser.prepareJSONFileName;
 import static httpUtil.HttpResponseParser.prepareResponseHeader;
 
-public class ServerToClientConnection implements Runnable {
+// FIXME Observer/Observable are deprecated, use concurrency
+public class ServerToClientConnection implements Runnable, Observer {
 
     private Socket socket;
 
@@ -21,8 +24,11 @@ public class ServerToClientConnection implements Runnable {
     private InputStream inputStream;
     private OutputStream outputStream;
 
+    private TransactionStatus transactionStatus = new TransactionStatus();
+
     ServerToClientConnection(Socket socket){
         this.socket = socket;
+        transactionStatus.addObserver(this);
     }
 
     @Override
@@ -58,6 +64,8 @@ public class ServerToClientConnection implements Runnable {
                     default:
                         handleUnknownRequest(header);
                 }
+
+                transactionStatus.setActive(false);
             }
 
             closeConnection();
@@ -150,7 +158,19 @@ public class ServerToClientConnection implements Runnable {
     }
 
     public void timeToCloseConnection(){
-        closeConnection(); // FIXME check if transaction is in work
+        keepConnectionToAClient = false;
+        if(transactionStatus.isNotActive()){ // If it is active, connection will be closed on update() call
+            closeConnection();
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o == transactionStatus){
+            if(!keepConnectionToAClient && transactionStatus.isNotActive()){
+                closeConnection();
+            }
+        }
     }
 
     private class HttpRequestParser {
@@ -160,6 +180,8 @@ public class ServerToClientConnection implements Runnable {
                 HttpRequestHeader header = new HttpRequestHeader(null, null, -1);
 
                 String line = reader.readLine();
+
+                transactionStatus.setActive(true);
 
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");
@@ -188,6 +210,20 @@ public class ServerToClientConnection implements Runnable {
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    private class TransactionStatus extends Observable{
+        private boolean active = false;
+
+        public void setActive(boolean active){
+            this.active = active;
+            setChanged();
+            notifyObservers();
+        }
+
+        public boolean isNotActive(){
+            return !active;
         }
     }
 }
