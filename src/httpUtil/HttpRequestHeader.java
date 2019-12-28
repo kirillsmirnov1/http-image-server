@@ -28,7 +28,7 @@ public class HttpRequestHeader {
                         // TODO add Host, accept and what else
                         "\r\n"; // Required blank line
         }
-        return null;
+        return "null";
     }
 
     private static String parseType(String fileName) {
