@@ -28,4 +28,5 @@ public interface Constants {
     String OK_200 = "200 OK";
     String NOT_FOUND_404 = "404 Not Found";
     String NOT_ALLOWED_405 = "405 Method Not Allowed";
+    String SERVER_ERROR_500 = "500 Internal Server Error";
 }
