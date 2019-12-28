@@ -56,14 +56,18 @@ public class ServerToClientConnection implements Runnable {
                         // TODO handle head request
                         break;
                     default:
-                        System.out.println("It doesn't look like anything to me");
-                        // TODO handle unknown request
+                        handleUnknownRequest(header);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleUnknownRequest(HttpRequestHeader header) {
+        System.out.println(header.getHeaderContents());
+        sendResponseHeader(prepareResponseHeader(NOT_ALLOWED_405));
     }
 
     private void handleGetRequest(HttpRequestHeader header) {
