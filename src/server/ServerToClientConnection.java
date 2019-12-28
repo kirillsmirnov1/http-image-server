@@ -5,7 +5,6 @@ import httpUtil.HttpRequestHeader;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -65,7 +64,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                         handleUnknownRequest(header);
                 }
 
-                transactionStatus.setActive(false);
+                transactionStatus.setActiveTransaction(false);
             }
 
             closeConnection();
@@ -159,7 +158,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     public void timeToCloseConnection(){
         keepConnectionToAClient = false;
-        if(transactionStatus.isNotActive()){ // If it is active, connection will be closed on update() call
+        if(transactionStatus.transactionIsNotActive()){ // If it is active, connection will be closed on update() call
             closeConnection();
         }
     }
@@ -167,7 +166,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(evt.getSource() == transactionStatus){
-            if(!keepConnectionToAClient && transactionStatus.isNotActive()){
+            if(!keepConnectionToAClient && transactionStatus.transactionIsNotActive()){
                 closeConnection();
             }
         }
@@ -181,7 +180,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 String line = reader.readLine();
 
-                transactionStatus.setActive(true);
+                transactionStatus.setActiveTransaction(true);
 
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");

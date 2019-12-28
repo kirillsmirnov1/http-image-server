@@ -5,10 +5,10 @@ import java.beans.PropertyChangeSupport;
 
 class TransactionStatus {
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-    private boolean active = false;
+    private boolean activeTransaction = false;
 
-    public boolean isNotActive(){
-        return !active;
+    public boolean transactionIsNotActive(){
+        return !activeTransaction;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener l) {
@@ -19,15 +19,15 @@ class TransactionStatus {
 
     }
 
-    public void setActive(boolean active){
-        this.active = active;
+    public void setActiveTransaction(boolean activeTransaction){
+        this.activeTransaction = activeTransaction;
     }
 
     public void removePropertyChangeListener(PropertyChangeListener l) {
         changes.removePropertyChangeListener(l);
     }
 
-    public boolean getActive(){
-        return active;
+    public boolean getActiveTransaction(){
+        return activeTransaction;
     }
 }
