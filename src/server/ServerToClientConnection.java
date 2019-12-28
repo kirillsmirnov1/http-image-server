@@ -46,6 +46,15 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 HttpRequestHeader header = new HttpRequestParser().parseRequest(reader);
 
+                if(ServerHandler.slowServer){
+                    try {
+                        System.out.println("Intentionally slowing server down");
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 if(header == null){
                     break;
                 }
@@ -189,14 +198,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                 String line = reader.readLine();
 
                 socketStatus.setActiveTransaction(true);
-
-                if(ServerHandler.slowServer){
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
 
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");
