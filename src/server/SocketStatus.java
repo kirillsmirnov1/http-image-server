@@ -40,7 +40,7 @@ class SocketStatus {
         return !socketOpen;
     }
 
-    public boolean isSocketOpen() {
+    public boolean getSocketOpen() {
         return socketOpen;
     }
 
