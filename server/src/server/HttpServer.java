@@ -75,8 +75,6 @@ public class HttpServer implements Runnable, PropertyChangeListener {
         }
 
         System.out.println("Server stopping");
-
-        // TODO handle waiting for end of client connections
     }
 
     @Override
