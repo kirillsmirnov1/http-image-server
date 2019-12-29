@@ -13,7 +13,7 @@ public class ClientHandler {
         HttpClient httpClient = new HttpClient(8080);
 
         while(keepConnection) {
-            httpClient.connectToServer(); // FIXME handle server being offline
+            httpClient.connectToServer();
 
             handleInput(httpClient);
 
