@@ -252,7 +252,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                             break;
                         }
                         default: {
-                            if(tokens[0].contains("-")) {
+                            if(tokens[0].indexOf("-") == 0) {
                                 String boundary = tokens[0].replaceFirst("-*", "");
                                 if (HttpServer.multipartReqs.containsKey(boundary)) {
                                     header.setMethod(HttpMethod.POST);
