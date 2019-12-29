@@ -9,6 +9,8 @@ public class HttpRequestHeader {
     private String fileName;
     private int contentLength;
 
+    private String contentType = "";
+
     private String actualHeader;
 
     public HttpRequestHeader(HttpMethod method, String fileName, int contentLength) {
@@ -72,5 +74,13 @@ public class HttpRequestHeader {
 
     public void setActualHeader(String actualHeader) {
         this.actualHeader = actualHeader;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }
