@@ -8,6 +8,7 @@ public class HttpRequestHeader {
     private HttpMethod method;
     private String fileName;
     private int contentLength;
+    private String boundary;
 
     private String contentType = "";
 
@@ -82,5 +83,13 @@ public class HttpRequestHeader {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public void setBoundary(String boundary) {
+        this.boundary = boundary;
+    }
+
+    public String getBoundary() {
+        return boundary;
     }
 }

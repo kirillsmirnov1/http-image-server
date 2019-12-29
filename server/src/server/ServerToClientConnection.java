@@ -25,6 +25,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
     private OutputStream outputStream;
 
     private SocketStatus socketStatus = new SocketStatus();
+    private BufferedReader bufferedReader;
 
     ServerToClientConnection(Socket socket, int id){
         this.socket = socket;
@@ -40,11 +41,11 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
             inputStream = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(isr);
+            bufferedReader = new BufferedReader(isr);
 
             while(keepConnectionToAClient) {
 
-                HttpRequestHeader header = new HttpRequestParser().parseRequest(reader);
+                HttpRequestHeader header = new HttpRequestParser().parseRequest(bufferedReader);
 
                 if(header == null){
                     break;
@@ -52,10 +53,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 System.out.println("\nClient sent: \n");
                 System.out.println(header.getActualHeader());
-
-                if(header.getContentType().equals(MULTIPART)){
-                    continue;
-                }
 
                 if(ServerHandler.slowServer){
                     try {
@@ -130,43 +127,66 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
     private void handlePostRequest(HttpRequestHeader header) {
 
-        byte[] bytes = new byte[header.getContentLength()];
+        if(header.getContentType().equals(MULTIPART)){
 
-        try {
+            HttpRequestHeader fileHeader = new HttpRequestParser().parseRequest(bufferedReader);
 
-            for(int i = 0; i < bytes.length; ++i){
-                bytes[i] = (byte)inputStream.read();
+            try(BufferedWriter fileWriter = new BufferedWriter(new FileWriter(fileHeader.getFileName()))) {
+
+                String line;
+
+                while(true){
+                    line = bufferedReader.readLine();
+                    if(line.contains(header.getBoundary())){
+                        break;
+                    }
+                    fileWriter.write(line);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-        } catch (IOException e) {
-            System.out.println("Couldn't read file from client");
-            closeConnection();
-            return;
-        }
+        } else {
 
-        try {
-            File file = new File(header.getFileName());
+            byte[] bytes = new byte[header.getContentLength()];
 
-            new FileOutputStream(file).write(bytes);
+            try {
 
-            System.out.println("File saved");
+                for (int i = 0; i < bytes.length; ++i) {
+                    bytes[i] = (byte) inputStream.read();
+                }
 
-        } catch (IOException e) {
-            System.out.println("Couldn't save file");
-            sendResponseHeader(prepareResponseHeader(SERVER_ERROR_500));
-            return;
-        }
+            } catch (IOException e) {
+                System.out.println("Couldn't read file from client");
+                closeConnection();
+                return;
+            }
 
-        String jsonResponse = prepareJSONFileName(header.getFileName());
+            try {
+                File file = new File(header.getFileName());
 
-        sendResponseHeader(prepareResponseHeader(OK_200, jsonResponse.length()));
+                new FileOutputStream(file).write(bytes);
 
-        try {
-            outputStream.write(jsonResponse.getBytes());
-            System.out.println("Response send");
-        } catch (IOException e) {
-            System.out.println("Couldn't response to client");
-            closeConnection();
+                System.out.println("File saved");
+
+            } catch (IOException e) {
+                System.out.println("Couldn't save file");
+                sendResponseHeader(prepareResponseHeader(SERVER_ERROR_500));
+                return;
+            }
+
+            String jsonResponse = prepareJSONFileName(header.getFileName());
+
+            sendResponseHeader(prepareResponseHeader(OK_200, jsonResponse.length()));
+
+            try {
+                outputStream.write(jsonResponse.getBytes());
+                System.out.println("Response send");
+            } catch (IOException e) {
+                System.out.println("Couldn't response to client");
+                closeConnection();
+            }
         }
     }
 
@@ -240,7 +260,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                             for(String token : tokens) {
                                 if (token.contains("boundary=")) {
                                     String boundary = token.substring(token.lastIndexOf("-") + 1);
-                                    HttpServer.multipartReqs.put(boundary, header.getContentLength()); // FIXME feels clumsy
+                                    header.setBoundary(boundary);
                                 } else if(token.equals(MULTIPART)){
                                     header.setContentType(MULTIPART);
                                 }
@@ -254,15 +274,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                                 }
                             }
                             break;
-                        }
-                        default: {
-                            if(tokens[0].indexOf("-") == 0) {
-                                String boundary = tokens[0].replaceFirst("-*", "");
-                                if (HttpServer.multipartReqs.containsKey(boundary)) {
-                                    header.setMethod(HttpMethod.POST);
-                                    header.setContentLength(HttpServer.multipartReqs.get(boundary));
-                                }
-                            }
                         }
                     }
                     line = reader.readLine();

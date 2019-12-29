@@ -21,8 +21,6 @@ public class HttpServer implements Runnable, PropertyChangeListener {
 
     HashMap<Integer, ServerToClientConnection> connections;
 
-    static HashMap<String, Integer> multipartReqs = new HashMap<>();
-
     HttpServer(int port){
         this.port = port;
         connections = new HashMap<>();
