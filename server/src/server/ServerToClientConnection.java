@@ -133,7 +133,11 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
         byte[] bytes = new byte[header.getContentLength()];
 
         try {
-            inputStream.read(bytes);
+
+            for(int i = 0; i < bytes.length; ++i){
+                bytes[i] = (byte)inputStream.read();
+            }
+
         } catch (IOException e) {
             System.out.println("Couldn't read file from client");
             closeConnection();
