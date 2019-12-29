@@ -84,7 +84,10 @@ public class HttpClient {
                     switch (method){
                         case GET:
                             byte[] buffer = new byte[responseHeader.getContentLength()];
-                            inputStream.read(buffer);
+
+                            for(int i = 0; i < buffer.length; ++i){
+                                buffer[i] = (byte)inputStream.read();
+                            }
 
                             File file = new File(filename);
                             new FileOutputStream(file).write(buffer);
