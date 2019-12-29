@@ -53,6 +53,10 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                 System.out.println("\nClient sent: \n");
                 System.out.println(header.getActualHeader());
 
+                if(header.getContentType().equals(MULTIPART)){
+                    continue;
+                }
+
                 if(ServerHandler.slowServer){
                     try {
                         System.out.println("Intentionally slowing server down");
@@ -202,8 +206,6 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
 
                 socketStatus.setActiveTransaction(true);
 
-
-
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");
 
@@ -228,6 +230,35 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                         }
                         case CONTENT_LENGTH: {
                             header.setContentLength(Integer.parseInt(tokens[1]));
+                            break;
+                        }
+                        case CONTENT_TYPE: {
+                            for(String token : tokens) {
+                                if (token.contains("boundary=")) {
+                                    String boundary = token.substring(token.lastIndexOf("-") + 1);
+                                    HttpServer.multipartReqs.put(boundary, header.getContentLength()); // FIXME feels clumsy
+                                } else if(token.equals(MULTIPART)){
+                                    header.setContentType(MULTIPART);
+                                }
+                            }
+                            break;
+                        }
+                        case CONTENT_DISPOSITION: {
+                            for(String token: tokens){
+                                if(token.contains("filename=")){
+                                    header.setFileName(token.substring(token.lastIndexOf("=") + 2, token.length()-1));
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            if(tokens[0].contains("-")) {
+                                String boundary = tokens[0].replaceFirst("-*", "");
+                                if (HttpServer.multipartReqs.containsKey(boundary)) {
+                                    header.setMethod(HttpMethod.POST);
+                                    header.setContentLength(HttpServer.multipartReqs.get(boundary));
+                                }
+                            }
                         }
                     }
                     line = reader.readLine();

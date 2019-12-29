@@ -13,9 +13,11 @@ public interface Constants {
     // HTTP fields
     String CONTENT_LENGTH = "Content-Length:";
     String CONTENT_TYPE = "Content-Type:";
+    String CONTENT_DISPOSITION = "Content-Disposition:";
 
     // Other HTTP constants
     String HTTP_1_1 = "HTTP/1.1";
+    String MULTIPART = "multipart/form-data;";
 
     // mime-types
     String IMAGE_JPEG = "image/jpeg";
