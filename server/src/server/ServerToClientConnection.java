@@ -51,7 +51,7 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                 }
 
                 System.out.println("\nClient sent: \n");
-                System.out.println(header.toString());
+                System.out.println(header.getActualHeader());
 
                 if(ServerHandler.slowServer){
                     try {
@@ -196,13 +196,18 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
         public HttpRequestHeader parseRequest(BufferedReader reader) {
             try {
                 HttpRequestHeader header = new HttpRequestHeader(null, null, -1);
+                StringBuilder str = new StringBuilder();
 
                 String line = reader.readLine();
 
                 socketStatus.setActiveTransaction(true);
 
+
+
                 while(!line.isEmpty()){
                     String[] tokens = line.split(" ");
+
+                    str.append(line).append("\r\n");
 
                     switch (tokens[0]){
                         case POST: // FIXME it would be better to use enum here, but POST.name() doesn't work here and I couldn't think of anything else
@@ -227,6 +232,8 @@ public class ServerToClientConnection implements Runnable, PropertyChangeListene
                     }
                     line = reader.readLine();
                 }
+
+                header.setActualHeader(str.toString());
 
                 return header;
             } catch (SocketException | NullPointerException e){

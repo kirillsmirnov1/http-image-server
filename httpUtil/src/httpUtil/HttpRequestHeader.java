@@ -9,6 +9,8 @@ public class HttpRequestHeader {
     private String fileName;
     private int contentLength;
 
+    private String actualHeader;
+
     public HttpRequestHeader(HttpMethod method, String fileName, int contentLength) {
         this.method = method;
         this.fileName = fileName;
@@ -62,5 +64,13 @@ public class HttpRequestHeader {
 
     public void setContentLength(int contentLength) {
         this.contentLength = contentLength;
+    }
+
+    public String getActualHeader() {
+        return actualHeader;
+    }
+
+    public void setActualHeader(String actualHeader) {
+        this.actualHeader = actualHeader;
     }
 }
